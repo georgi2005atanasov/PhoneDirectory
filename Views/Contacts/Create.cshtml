@@ -5,8 +5,11 @@
     ViewData["Title"] = "Add Contact";
 }
 
-<h2>@ViewData["Title"]</h2>
 
+<div class="d-flex justify-content-between align-items-end mb-3">
+    <h2 class="m-0">Add Contact</h2>
+    <a href="@Url.Action("All", "Contacts")" class="btn btn-secondary py-2">All contacts</a>
+</div>
 <form asp-action="Create" method="post" enctype="multipart/form-data">
     <div class="d-flex justify-content-start align-items-start">
         <div class="image-upload-container" onclick="document.getElementById('photo').click()">
@@ -50,17 +53,6 @@
     </div>
 
     <div id="addressFields" style="display:none;">
-        <div class="form-group mt-3 country-picker">
-            <label asp-for="Country"></label>
-            <select asp-for="Country" class="custom-select">
-                @foreach (var data in ViewBag.CountriesAndPrefixes)
-                {
-                    <option value="@data.CountryName">@data.CountryName</option>
-                }
-            </select>
-            <span asp-validation-for="Country" class="text-danger d-flex"></span>
-        </div>
-
         <div class="form-group mt-3">
             <label asp-for="Street"></label>
             <input asp-for="Street" class="form-control" />
@@ -69,8 +61,15 @@
 
         <div class="form-group">
             <label asp-for="PostalCode"></label>
-            <input asp-for="PostalCode" class="form-control" />
+            <input asp-for="PostalCode" type="number" class="form-control w-25" />
             <span asp-validation-for="PostalCode" class="text-danger"></span>
+        </div>
+
+        <div class="form-group d-flex flex-column mt-2 mb-3">
+            <label asp-for="Notes"></label>
+            <textarea asp-for="Notes" rows="3" class="form-control" id="exampleFormControlTextarea1">
+            </textarea>
+            <span asp-validation-for="Notes" class="text-danger"></span>
         </div>
     </div>
 

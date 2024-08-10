@@ -74,6 +74,7 @@ namespace PhoneDirectory.Data.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     OriginalFileName = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    OriginalType = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     CircleContent = table.Column<byte[]>(type: "varbinary(max)", nullable: true),
                     DetailsContent = table.Column<byte[]>(type: "varbinary(max)", nullable: true),
                     ContactId = table.Column<int>(type: "int", nullable: true)

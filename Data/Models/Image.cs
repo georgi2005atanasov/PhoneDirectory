@@ -6,6 +6,8 @@
 
         public string? OriginalFileName { get; set; } = null!;
 
+        public string OriginalType { get; set; } = null!;
+
         public byte[]? CircleContent { get; set; }
 
         public byte[]? DetailsContent { get; set; }

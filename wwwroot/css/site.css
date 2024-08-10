@@ -28,7 +28,8 @@ h2 {
     text-align: center;
     margin-top: 30px;
     margin-bottom: 20px;
-    box-shadow: 0 4px 0px rgba(0, 0, 0, 0.4); /* Shadow effect */
+    box-shadow: 0 4px 0px rgba(0, 0, 0, 0.4);
+    padding: 3px;
 }
 
 html, body {
@@ -109,10 +110,24 @@ label {
     z-index: 1;
 }
 
-.btn {
-    border-radius: 0px;
+.btn, input {
+    border-radius: 0px !important;
 }
 
 .back-btn {
     background-color: #e9ecef;
+}
+
+.table-responsive {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+td {
+    vertical-align: middle;
+}
+
+td a {
+    min-width: 83px;
+    margin: 1px;
 }

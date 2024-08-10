@@ -23,10 +23,6 @@
             base.OnModelCreating(builder);
 
             builder.Entity<Contact>()
-                .HasIndex(c => c.Email)
-                .IsUnique();
-
-            builder.Entity<Contact>()
                 .HasIndex(c => c.PhoneNumber)
                 .IsUnique();
 

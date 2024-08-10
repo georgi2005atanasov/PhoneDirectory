@@ -12,7 +12,7 @@ using PhoneDirectory.Data;
 namespace PhoneDirectory.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240810124256_InitDb")]
+    [Migration("20240810184707_InitDb")]
     partial class InitDb
     {
         /// <inheritdoc />
@@ -143,6 +143,10 @@ namespace PhoneDirectory.Data.Migrations
                         .HasColumnType("varbinary(max)");
 
                     b.Property<string>("OriginalFileName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("OriginalType")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");

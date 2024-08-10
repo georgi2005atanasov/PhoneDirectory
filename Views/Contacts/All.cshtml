@@ -1,0 +1,57 @@
+﻿@using PhoneDirectory.Models.Contact
+@model AllContactsViewModel
+
+@{
+    ViewData["Title"] = "Home Page";
+}
+
+<div class="container">
+    <div class="d-flex justify-content-between align-items-end mb-3">
+        <h2 class="m-0">All Contacts</h2>
+        <a href="@Url.Action("Create", "Contacts")" class="btn btn-secondary py-2">Add contact</a>
+    </div>
+
+    <form class="form-inline d-flex my-2 my-lg-0 mb-3" method="get" action="@Url.Action("All", "Contacts")">
+        <input class="form-control mr-sm-2 p-2" type="search" placeholder="Name, Phone Number" aria-label="Search" name="search" value="@Model.Search">
+        <button class="btn btn-outline-primary" type="submit">Search</button>
+    </form>
+
+    <div class="table-responsive">
+        <table class="table">
+            <thead class="thead-light">
+                <tr>
+                    <th>#</th>
+                    <th>Image</th>
+                    <th>Name</th>
+                    <th>Phone Number</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @{
+                    int counter = 1;
+                }
+                @foreach (var contact in Model.Contacts)
+                {
+                    <tr>
+                        <td>@counter</td>
+                        <td>
+                            @if (contact.ImageData != null)
+                            {
+                                <img src="data:image/jpeg;base64,@Convert.ToBase64String(contact.ImageData)" alt="Contact Image" class="contact-image" />
+                            }
+                        </td>
+                        <td>@contact.Name</td>
+                        <td>@contact.Prefix@contact.PhoneNumber</td>
+                        <td>
+                            <a href="@Url.Action("Details", "Contacts", new { id = contact.ContactId })" class="btn btn-primary">Details</a>
+                            <a href="@Url.Action("Edit", "Contacts", new { id = contact.ContactId })" class="btn btn-warning">Edit</a>
+                            <a href="@Url.Action("Delete", "Contacts", new { id = contact.ContactId })" class="btn btn-danger">Delete</a>
+                        </td>
+                    </tr>
+                    counter++;
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

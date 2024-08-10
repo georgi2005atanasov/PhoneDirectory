@@ -1,9 +1,13 @@
 using PhoneDirectory.Infrastructure;
+using PhoneDirectory.Services.Contacts;
+using PhoneDirectory.Services.Images;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services
     .AddControllersWithViews();
+builder.Services.AddTransient<IContactService, ContactService>();
+builder.Services.AddTransient<IImageService, ImageService>();
 
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? "";
 
@@ -27,7 +31,7 @@ app.UseEndpoints(endpoints =>
 {
     endpoints.MapControllerRoute(
         name: "default",
-        pattern: "{controller=PhoneDirectory}/{action=All}/{id?}");
+        pattern: "{controller=Contacts}/{action=All}/{id?}");
 });
 
 app.ApplyMigrations();
