@@ -13,7 +13,6 @@
 
             if (dbContext.Database.ProviderName != null)
             {
-                dbContext.Database.EnsureCreated();
                 dbContext.Database.Migrate();
 
                 dbContext.SeedDatabase(services);

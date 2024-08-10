@@ -41,7 +41,8 @@
             builder.Entity<Country>()
                 .HasMany(c => c.CountryNumbersLengths)
                 .WithOne(p => p.Country)
-                .HasForeignKey(p => p.CountryId);
+                .HasForeignKey(p => p.CountryId)
+                .OnDelete(DeleteBehavior.Restrict);
 
             builder.Entity<Country>()
                 .HasIndex(c => c.PhonePrefix)
@@ -54,9 +55,6 @@
             builder.Entity<Country>()
                 .HasIndex(c => c.Name)
                 .IsUnique();
-
-            builder.Entity<CountryNumberLength>()
-                .HasKey(c => new { c.CountryId, c.DigitsCount });
         }
     }
 }
