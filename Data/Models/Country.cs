@@ -6,10 +6,8 @@
 
         public string Name { get; set; } = null!;
 
-        public string PhonePrefix { get; set; } = null!;
-
         public string IsoCode { get; set; } = null!;
 
-        public HashSet<CountryNumberLength> CountryNumbersLengths { get; set; } = new HashSet<CountryNumberLength>();
+        public string CountryPrefix { get; set; } = null!;
     }
 }

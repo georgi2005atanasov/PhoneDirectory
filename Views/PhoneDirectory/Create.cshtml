@@ -1,0 +1,114 @@
+﻿@using PhoneDirectory.Models.Contact
+@model ContactInputModel
+
+@{
+    ViewData["Title"] = "Add Contact";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<form asp-action="Create" method="post" enctype="multipart/form-data">
+    <div class="d-flex justify-content-start align-items-start">
+        <div class="image-upload-container" onclick="document.getElementById('photo').click()">
+            <img id="photoPreview" src="#" alt="Photo Preview" style="display:none;" />
+            <i id="uploadIcon" class="fa fa-camera" aria-hidden="true"></i>
+        </div>
+        <input asp-for="Image" type="file" id="photo" name="Image" class="form-control-file d-none" accept="image/*" onchange="previewPhoto(event)">
+    </div>
+    <span asp-validation-for="Image" class="text-danger"></span>
+
+    <div class="form-group">
+        <label asp-for="Name"></label>
+        <input asp-for="Name" class="form-control" />
+        <span asp-validation-for="Name" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="PhoneNumber"></label>
+        <div class="input-group">
+            <select asp-for="PhonePrefix" class="custom-select">
+                @foreach (var data in ViewBag.CountriesAndPrefixes)
+                {
+                    <option value="@data.Prefix">
+                        @data.Prefix @data.IsoCode
+                    </option>
+                }
+            </select>
+            <input asp-for="PhoneNumber" class="form-control" />
+        </div>
+        <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Email"></label>
+        <input asp-for="Email" class="form-control" />
+        <span asp-validation-for="Email" class="text-danger"></span>
+    </div>
+
+    <div class="d-block ms-2">
+        <button type="button" class="btn btn-secondary" onclick="toggleAddress()">Show more</button>
+    </div>
+
+    <div id="addressFields" style="display:none;">
+        <div class="form-group mt-3 country-picker">
+            <label asp-for="Country"></label>
+            <select asp-for="Country" class="custom-select">
+                @foreach (var data in ViewBag.CountriesAndPrefixes)
+                {
+                    <option value="@data.CountryName">@data.CountryName</option>
+                }
+            </select>
+            <span asp-validation-for="Country" class="text-danger d-flex"></span>
+        </div>
+
+        <div class="form-group mt-3">
+            <label asp-for="Street"></label>
+            <input asp-for="Street" class="form-control" />
+            <span asp-validation-for="Street" class="text-danger"></span>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="PostalCode"></label>
+            <input asp-for="PostalCode" class="form-control" />
+            <span asp-validation-for="PostalCode" class="text-danger"></span>
+        </div>
+    </div>
+
+    <div class="w-100 d-flex justify-content-center align-items-center my-2">
+        <button type="button" class="w-100 btn back-btn" onclick="goBack()">Back</button>
+        <button type="submit" class="w-100 btn btn-primary">Save</button>
+    </div>
+</form>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+@section Scripts {
+    <script>
+        function toggleAddress() {
+            const addressFields = document.getElementById('addressFields');
+            if (addressFields.style.display === "none") {
+                addressFields.style.display = "block";
+            } else {
+                addressFields.style.display = "none";
+            }
+        }
+
+        function previewPhoto(event) {
+            const reader = new FileReader();
+            reader.onload = function() {
+                const preview = document.getElementById('photoPreview');
+                const icon = document.getElementById('uploadIcon');
+                preview.src = reader.result;
+                preview.style.display = 'flex';
+                icon.style.display = 'none';
+            };
+            reader.readAsDataURL(event.target.files[0]);
+        }
+
+        function goBack() {
+            history.back();
+        }
+    </script>
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    }

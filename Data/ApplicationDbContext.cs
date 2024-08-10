@@ -16,8 +16,6 @@
 
         public DbSet<Address> Addresses { get; set; }
 
-        public DbSet<CountryNumberLength> CountriesNumbersLengths { get; set; }
-
         public DbSet<Image> Images { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
@@ -39,13 +37,7 @@
                 .OnDelete(DeleteBehavior.Restrict);
 
             builder.Entity<Country>()
-                .HasMany(c => c.CountryNumbersLengths)
-                .WithOne(p => p.Country)
-                .HasForeignKey(p => p.CountryId)
-                .OnDelete(DeleteBehavior.Restrict);
-
-            builder.Entity<Country>()
-                .HasIndex(c => c.PhonePrefix)
+                .HasIndex(c => c.CountryPrefix)
                 .IsUnique();
 
             builder.Entity<Country>()

@@ -2,6 +2,7 @@
 {
     using Microsoft.EntityFrameworkCore;
     using PhoneDirectory.Data;
+    using PhoneDirectory.Data.Models;
 
     public static class ApplicationBuilderExtensions
     {
@@ -28,10 +29,16 @@
                 var countries = loader
                     .LoadCountries("countries.txt");
 
-                var countriesNumbersLengths = loader
-                    .LoadCountriesNumbersLengths("countriesNumbersLengths.txt");
-            }
+                dbContext.Countries
+                .AddRange(countries.Select(x => new Country
+                {
+                    Name = x.Name,
+                    IsoCode = x.IsoCode,
+                    CountryPrefix = x.PhonePrefix
+                }));
 
+                dbContext.SaveChanges();
+            }
         }
     }
 }

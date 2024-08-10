@@ -17,8 +17,8 @@ namespace PhoneDirectory.Data.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    PhonePrefix = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    IsoCode = table.Column<string>(type: "nvarchar(450)", nullable: false)
+                    IsoCode = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    CountryPrefix = table.Column<string>(type: "nvarchar(450)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -43,26 +43,6 @@ namespace PhoneDirectory.Data.Migrations
                         column: x => x.CountryId,
                         principalTable: "Countries",
                         principalColumn: "Id");
-                });
-
-            migrationBuilder.CreateTable(
-                name: "CountriesNumbersLengths",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    CountryId = table.Column<int>(type: "int", nullable: false),
-                    DigitsCount = table.Column<int>(type: "int", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_CountriesNumbersLengths", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_CountriesNumbersLengths_Countries_CountryId",
-                        column: x => x.CountryId,
-                        principalTable: "Countries",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -133,6 +113,12 @@ namespace PhoneDirectory.Data.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
+                name: "IX_Countries_CountryPrefix",
+                table: "Countries",
+                column: "CountryPrefix",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Countries_IsoCode",
                 table: "Countries",
                 column: "IsoCode",
@@ -145,17 +131,6 @@ namespace PhoneDirectory.Data.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_Countries_PhonePrefix",
-                table: "Countries",
-                column: "PhonePrefix",
-                unique: true);
-
-            migrationBuilder.CreateIndex(
-                name: "IX_CountriesNumbersLengths_CountryId",
-                table: "CountriesNumbersLengths",
-                column: "CountryId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Images_ContactId",
                 table: "Images",
                 column: "ContactId",
@@ -166,9 +141,6 @@ namespace PhoneDirectory.Data.Migrations
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropTable(
-                name: "CountriesNumbersLengths");
-
             migrationBuilder.DropTable(
                 name: "Images");
 

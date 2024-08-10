@@ -12,7 +12,7 @@ using PhoneDirectory.Data;
 namespace PhoneDirectory.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240810052714_InitDb")]
+    [Migration("20240810124256_InitDb")]
     partial class InitDb
     {
         /// <inheritdoc />
@@ -99,6 +99,10 @@ namespace PhoneDirectory.Data.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<string>("CountryPrefix")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
                     b.Property<string>("IsoCode")
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
@@ -107,11 +111,10 @@ namespace PhoneDirectory.Data.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<string>("PhonePrefix")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
                     b.HasKey("Id");
+
+                    b.HasIndex("CountryPrefix")
+                        .IsUnique();
 
                     b.HasIndex("IsoCode")
                         .IsUnique();
@@ -119,31 +122,7 @@ namespace PhoneDirectory.Data.Migrations
                     b.HasIndex("Name")
                         .IsUnique();
 
-                    b.HasIndex("PhonePrefix")
-                        .IsUnique();
-
                     b.ToTable("Countries");
-                });
-
-            modelBuilder.Entity("PhoneDirectory.Data.Models.CountryNumberLength", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("CountryId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("DigitsCount")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CountryId");
-
-                    b.ToTable("CountriesNumbersLengths");
                 });
 
             modelBuilder.Entity("PhoneDirectory.Data.Models.Image", b =>
@@ -193,17 +172,6 @@ namespace PhoneDirectory.Data.Migrations
                     b.Navigation("Address");
                 });
 
-            modelBuilder.Entity("PhoneDirectory.Data.Models.CountryNumberLength", b =>
-                {
-                    b.HasOne("PhoneDirectory.Data.Models.Country", "Country")
-                        .WithMany("CountryNumbersLengths")
-                        .HasForeignKey("CountryId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("Country");
-                });
-
             modelBuilder.Entity("PhoneDirectory.Data.Models.Image", b =>
                 {
                     b.HasOne("PhoneDirectory.Data.Models.Contact", "Contact")
@@ -212,11 +180,6 @@ namespace PhoneDirectory.Data.Migrations
                         .OnDelete(DeleteBehavior.Restrict);
 
                     b.Navigation("Contact");
-                });
-
-            modelBuilder.Entity("PhoneDirectory.Data.Models.Country", b =>
-                {
-                    b.Navigation("CountryNumbersLengths");
                 });
 #pragma warning restore 612, 618
         }
