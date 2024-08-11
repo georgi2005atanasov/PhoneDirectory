@@ -1,50 +1,63 @@
 ﻿@using PhoneDirectory.Models.Contact
-@model ContactInputModel
+@model EditContactViewModel
 
 @{
-    ViewData["Title"] = "Add Contact";
+    ViewData["Title"] = "Edit Contact";
 }
 
 
 <div class="d-flex justify-content-between align-items-end mb-3">
-    <h2 class="m-0">Add Contact</h2>
+    <h2 class="m-0">Edit Contact</h2>
     <a href="@Url.Action("All", "Contacts")" class="btn btn-secondary py-2">All contacts</a>
 </div>
-<form asp-action="Create" method="post" enctype="multipart/form-data">
+<form asp-action="Edit" asp-controller="Contacts" method="post" enctype="multipart/form-data">
+     <input type="hidden" name="_method" value="PUT" />
+
     <div class="d-flex justify-content-start align-items-start">
         <div class="image-upload-container" onclick="document.getElementById('photo').click()">
-            <img id="photoPreview" src="#" alt="Photo Preview" style="display:none;" />
+            <img id="photoPreview" src="#" alt="Photo Preview" style="display:none; z-index: 10;" />
+            @if (Model.ImageData != null)
+            {
+                <img src="data:image/jpeg;base64,@Convert.ToBase64String(Model.ImageData!)" alt="@Model.Name" style="z-index: 5" />
+            }
+            else
+            {
+                <img src="@Url.Content("~/images/no-photo.jpg")"
+                 alt="no image"
+                 class="contact-image"
+                 style="width: 180px; height: 250px" />
+            }
             <i id="uploadIcon" class="fa fa-camera" aria-hidden="true"></i>
         </div>
-        <input asp-for="Image" type="file" id="photo" name="Image" class="form-control-file d-none" accept="image/*" onchange="previewPhoto(event)">
+        <input asp-for="UploadedImage" type="file" id="photo" name="UploadedImage" class="form-control-file d-none" accept="image/*" onchange="previewPhoto(event)">
     </div>
-    <span asp-validation-for="Image" class="text-danger"></span>
+    <span asp-validation-for="UploadedImage" class="text-danger"></span>
 
     <div class="form-group">
         <label asp-for="Name"></label>
-        <input asp-for="Name" class="form-control" />
+        <input asp-for="Name" class="form-control" value="@Model.Name" />
         <span asp-validation-for="Name" class="text-danger"></span>
     </div>
 
     <div class="form-group">
         <label asp-for="PhoneNumber"></label>
         <div class="input-group">
-            <select asp-for="PhonePrefix" class="custom-select">
+            <select asp-for="CountryPrefix" class="custom-select">
                 @foreach (var data in ViewBag.CountriesAndPrefixes)
                 {
-                    <option value="@data.Prefix">
+                    <option value="@data.Prefix" selected=@(data.Prefix == Model.CountryPrefix)>
                         @data.Prefix @data.IsoCode
                     </option>
                 }
             </select>
-            <input asp-for="PhoneNumber" class="form-control" />
+            <input asp-for="PhoneNumber" class="form-control" value="@Model.PhoneNumber" />
         </div>
         <span asp-validation-for="PhoneNumber" class="text-danger"></span>
     </div>
 
     <div class="form-group">
         <label asp-for="Email"></label>
-        <input asp-for="Email" class="form-control" />
+        <input asp-for="Email" class="form-control" value="@Model.Email" />
         <span asp-validation-for="Email" class="text-danger"></span>
     </div>
 
@@ -55,19 +68,20 @@
     <div id="addressFields" style="display:none;">
         <div class="form-group mt-3">
             <label asp-for="Street"></label>
-            <input asp-for="Street" class="form-control" />
+            <input asp-for="Street" class="form-control" value="@Model.Street" />
             <span asp-validation-for="Street" class="text-danger"></span>
         </div>
 
         <div class="form-group">
             <label asp-for="PostalCode"></label>
-            <input asp-for="PostalCode" type="number" class="form-control w-25" />
+            <input asp-for="PostalCode" type="number" class="form-control w-25" value="@Model.PostalCode" />
             <span asp-validation-for="PostalCode" class="text-danger"></span>
         </div>
 
         <div class="form-group d-flex flex-column mt-2 mb-3">
             <label asp-for="Notes"></label>
             <textarea asp-for="Notes" rows="3" class="form-control" id="exampleFormControlTextarea1">
+                @Model.Notes
             </textarea>
             <span asp-validation-for="Notes" class="text-danger"></span>
         </div>
@@ -78,7 +92,6 @@
         <button type="submit" class="w-100 btn btn-primary">Save</button>
     </div>
 </form>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 
 @{
     await Html.RenderPartialAsync("_ValidationScriptsPartial");

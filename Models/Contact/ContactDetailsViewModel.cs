@@ -16,8 +16,12 @@
 
         public string PhoneNumber { get; set; } = null!;
 
+        public string CountryPrefix { get; set; } = null!;
+
         public string? Notes { get; set; }
 
         public byte[]? ImageData { get; set; }
+
+        public bool IsDeleted { get; set; }
     }
 }

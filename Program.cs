@@ -22,10 +22,29 @@ if (!app.Environment.IsDevelopment())
     app.UseHsts();
 }
 
+app.Use(async (context, next) =>
+{
+    if (context.Request.Method == "POST" && context.Request.Form["_method"] == "PUT")
+    {
+        context.Request.Method = "PUT";
+    }
+    await next();
+});
+
+app.Use(async (context, next) =>
+{
+    if (context.Request.Method == "POST" && context.Request.Form["_method"] == "DELETE")
+    {
+        context.Request.Method = "DELETE";
+    }
+    await next();
+});
+
 app
     .UseHttpsRedirection()
     .UseStaticFiles()
     .UseRouting();
+
 
 app.UseEndpoints(endpoints =>
 {

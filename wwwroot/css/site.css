@@ -124,6 +124,15 @@ td {
     vertical-align: middle;
 }
 
+td form button {
+    min-width: 95px;
+}
+
+
+td form {
+    max-width: 95px;
+}
+
 td a {
     min-width: 83px;
     margin: 1px;

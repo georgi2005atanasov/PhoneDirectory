@@ -1,5 +1,6 @@
 ﻿namespace PhoneDirectory.Services.Images
 {
+    using Microsoft.EntityFrameworkCore;
     using PhoneDirectory.Data;
     using PhoneDirectory.Data.Models;
 
@@ -22,7 +23,8 @@
                 DetailsContent = detailsData,
                 CircleContent = circleData,
                 ContactId = contactId,
-                OriginalType = fileType
+                OriginalType = fileType,
+                CreatedOn = DateTime.Now,
             };
 
             db.Images.Add(image);
@@ -30,6 +32,26 @@
             await db.SaveChangesAsync();
 
             return image.Id;
+        }
+
+        public async Task ChangeImage(string fileName,
+            string contentType,
+            byte[] resizedImage, 
+            byte[] circleContent, 
+            int contactId)
+        {
+            var existingImage = await db.Images
+                .FirstOrDefaultAsync(x => x.ContactId == contactId);
+
+            if (existingImage != null)
+            {
+                existingImage.OriginalFileName = fileName;
+                existingImage.OriginalType = contentType;
+                existingImage.DetailsContent = resizedImage;
+                existingImage.CircleContent = circleContent;
+
+                await db.SaveChangesAsync();
+            }
         }
     }
 }

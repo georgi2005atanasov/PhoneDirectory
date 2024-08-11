@@ -23,6 +23,15 @@
             base.OnModelCreating(builder);
 
             builder.Entity<Contact>()
+                .HasQueryFilter(x => !x.IsDeleted);
+
+            builder.Entity<Address>()
+                .HasQueryFilter(x => !x.IsDeleted);
+
+            builder.Entity<Image>()
+                .HasQueryFilter(x => !x.IsDeleted);
+
+            builder.Entity<Contact>()
                 .HasIndex(c => c.PhoneNumber)
                 .IsUnique();
 
