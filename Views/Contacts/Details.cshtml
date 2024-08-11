@@ -1,0 +1,54 @@
+﻿@using PhoneDirectory.Models.Contact
+@model ContactDetailsViewModel
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-12 col-lg-8">
+            <div class="card shadow-sm position-relative">
+                <div class="row">
+                    <div class="col-lg-4 d-flex align-items-center justify-content-center position-relative p-3">
+                        @if (Model.ImageData != null)
+                        {
+                            <img src="data:image/jpeg;base64,@Convert.ToBase64String(Model.ImageData)" alt="@Model.Name" />
+                        }
+                        else
+                        {
+                            <img src="@Url.Content("~/images/no-photo.jpg")"
+                             alt="no image"
+                             class="contact-image"
+                             style="width: 105px; height: 105px" />
+                        }
+                    </div>
+
+                    <div class="col-lg-8">
+                        <div class="card-body">
+                            <h4 class="card-title">@Model.Name</h4>
+                            <p class="card-text"><strong>Email:</strong>&nbsp;@(Model.Email ?? "-")</p>
+                            <p class="card-text"><strong>Phone:</strong>&nbsp;@Model.PhoneNumber</p>
+                            <p class="card-text"><strong>Street:</strong>&nbsp;@(Model.Street ?? "-")</p>
+                            <p class="card-text"><strong>Postal Code:</strong>&nbsp;@(Model.PostalCode?.ToString() ?? "-")</p>
+                            <p class="card-text"><strong>Country:</strong>&nbsp;@(Model.Country ?? "-")</p>
+                            <p class="card-text"><strong>Notes:</strong>&nbsp;@(Model.Notes ?? "-")</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card-footer bg-white d-flex flex-column justify-content-between">
+                    <a href="@Url.Action("All", "Contacts")" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left"></i> Back to All
+                    </a>
+                    <div class="d-flex justify-content-end align-content-center mt-1">
+                        <a href="@Url.Action("Edit", new { id = Model.Id })" class="btn btn-warning me-2">
+                            <i class="fas fa-edit"></i> Edit
+                        </a>
+                        <a href="@Url.Action("Delete", new { id = Model.Id })" class="btn btn-danger">
+                            <i class="fas fa-trash-alt"></i> Delete
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">

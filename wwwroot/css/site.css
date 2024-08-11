@@ -35,6 +35,12 @@ h2 {
 html, body {
     height: 100%;
     margin: 0;
+    position: relative;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
 }
 
 .content-wrapper {
@@ -44,22 +50,6 @@ html, body {
 
 main {
     padding-bottom: 60px;
-}
-
-footer {
-    bottom: 0;
-    width: 100%;
-    line-height: 60px;
-    background-color: #f8f9fa;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-top: 100px;
-}
-
-.footer-content {
-    text-align: center;
-    padding: 20px 0;
 }
 
 .image-upload-container {

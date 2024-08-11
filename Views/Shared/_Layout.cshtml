@@ -28,20 +28,15 @@
         </div>
     </nav>
 
-    <div class="container">
+    <div class="container position-relative">
         <main role="main" class="pb-3">
             @RenderBody()
         </main>
     </div>
 
-    <footer class="border-top footer text-muted">
-        <div class="container d-flex flex-column align-items-center">
-            <span>&copy; @DateTime.Now.Year - PhoneDirectory</span>
-        </div>
-    </footer>
-
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js"></script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

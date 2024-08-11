@@ -2,6 +2,6 @@
 {
     public static class WebConstants
     {
-        public const int ItemsPerPage = 4;
+        public const int ItemsPerPage = 8;
     }
 }

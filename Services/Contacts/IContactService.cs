@@ -1,7 +1,7 @@
-﻿using PhoneDirectory.Models.Contact;
-
-namespace PhoneDirectory.Services.Contacts
+﻿namespace PhoneDirectory.Services.Contacts
 {
+    using PhoneDirectory.Models.Contact;
+
     public interface IContactService
     {
         Task<(List<ContactViewModel>, int allContactsCount)> All(string? search,
@@ -14,5 +14,7 @@ namespace PhoneDirectory.Services.Contacts
             string? notes,
             string? street,
             int? postalCode);
+
+        Task<ContactDetailsViewModel> DetailsById(int contactId);
     }
 }

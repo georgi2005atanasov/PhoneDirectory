@@ -29,18 +29,42 @@
         public async Task<IActionResult> All(string? search,
             int page = 1)
         {
-            var (contacts, allContactsCount) = await contactService.All(search, page);
-
-            var allContactsModel = new AllContactsViewModel
+            try
             {
-                Contacts = contacts,
-                Search = search,
-                Page = page,
-                AllContactsCount = allContactsCount
-            };
+                var (contacts, allContactsCount) = await contactService.All(search, page);
 
-            return View(allContactsModel);
+                var allContactsModel = new AllContactsViewModel
+                {
+                    Contacts = contacts,
+                    Search = search,
+                    Page = page,
+                    AllContactsCount = allContactsCount
+                };
+
+                return View(allContactsModel);
+            }
+            catch (Exception)
+            {
+                return RedirectToAction("All");
+            }
         }
+
+        public async Task<IActionResult> Details(int id)
+        {
+            try
+            {
+                var contact = await contactService.DetailsById(id);
+
+                return View(contact);
+            }
+            catch (Exception)
+            {
+                TempData["Message"] = "Could not get the user, try to refresh.";
+                TempData["MessageType"] = "danger";
+                return RedirectToAction("All");
+            }
+        }
+
 
         [HttpGet]
         public async Task<IActionResult> Create()
@@ -56,62 +80,66 @@
             if (contactModel != null && await db.Contacts.AnyAsync(x => x.PhoneNumber == contactModel.PhoneNumber))
                 ModelState.AddModelError("PhoneNumber", "Contact with this number already exists!");
 
-            if (ModelState.IsValid)
+            using (var transaction = await db.Database.BeginTransactionAsync())
             {
-                using (var transaction = await db.Database.BeginTransactionAsync())
+                try
                 {
-                    try
+                    if (ModelState.IsValid)
                     {
-                        if (ModelState.IsValid)
+                        var contactId = await contactService.Create(contactModel!.Name,
+                            contactModel.PhonePrefix,
+                            contactModel.PhoneNumber,
+                            contactModel.Email,
+                            contactModel.Notes,
+                            contactModel.Street,
+                            contactModel.PostalCode);
+
+                        if (contactModel.Image != null)
                         {
-                            var contactId = await contactService.Create(contactModel!.Name,
-                                contactModel.PhonePrefix,
-                                contactModel.PhoneNumber,
-                                contactModel.Email,
-                                contactModel.Notes,
-                                contactModel.Street,
-                                contactModel.PostalCode);
+                            byte[] smallCircularImage = ImageHelper.CreateCircleImage(contactModel.Image, 55);
+                            byte[] resizedImage = ImageHelper.ResizeImage(contactModel.Image, 180, 250);
 
-                            if (contactModel.Image != null)
-                            {
-                                byte[] smallCircularImage = ImageHelper.CreateCircleImage(contactModel.Image, 55);
-                                byte[] resizedImage = ImageHelper.ResizeImage(contactModel.Image, 180, 250);
-
-                                await imageService.Create(resizedImage,
-                                    smallCircularImage,
-                                    contactModel.Image.FileName,
-                                    contactModel.Image.ContentType,
-                                    contactId);
-                            }
-
-                            await transaction.CommitAsync();
-
-                            TempData["Message"] = "User added successfully!";
-                            TempData["MessageType"] = "success";
+                            await imageService.Create(resizedImage,
+                                smallCircularImage,
+                                contactModel.Image.FileName,
+                                contactModel.Image.ContentType,
+                                contactId);
                         }
-                        else
-                        {
-                            await transaction.RollbackAsync();
-                        }
-                    }
-                    catch (Exception)
-                    {
-                        await transaction.RollbackAsync();
-                        TempData["Message"] = "An error occurred while adding the user.";
-                        TempData["MessageType"] = "danger";
+
+                        await transaction.CommitAsync();
+
+                        TempData["Message"] = "User added successfully!";
+                        TempData["MessageType"] = "success";
+
                         return RedirectToAction("All");
                     }
-
+                    else
+                    {
+                        await transaction.RollbackAsync();
+                    }
+                }
+                catch (Exception)
+                {
+                    await transaction.RollbackAsync();
+                    TempData["Message"] = "An error occurred while adding the user.";
+                    TempData["MessageType"] = "danger";
                     return RedirectToAction("All");
                 }
             }
 
             if (contactModel == null)
-                ModelState.AddModelError("Image", "The uploaded file exceeds the allowed size limit of 1.99MB.");
+                ModelState.AddModelError("Image", "The uploaded file exceeds the allowed size limit of 1.5MB.");
 
             ViewBag.CountriesAndPrefixes = await GetCountriesAndPrefixes();
 
             return View(contactModel);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Edit()
+        {
+            ViewBag.CountriesAndPrefixes = await GetCountriesAndPrefixes();
+            return View();
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

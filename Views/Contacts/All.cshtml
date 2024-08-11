@@ -48,7 +48,16 @@
                         <td>
                             @if (contact.ImageData != null)
                             {
-                                <img src="data:image/jpeg;base64,@Convert.ToBase64String(contact.ImageData)" alt="Contact Image" class="contact-image" />
+                                <img src="data:image/jpeg;base64,@Convert.ToBase64String(contact.ImageData)" 
+                                alt="Contact Image" 
+                                class="contact-image" />
+                            }
+                            else
+                            {
+                                <img src="@Url.Content("~/images/no-photo.jpg")" 
+                                alt="no image" 
+                                class="contact-image"
+                                style="width: 55px; height: 55px" />
                             }
                         </td>
                         <td>@contact.Name</td>

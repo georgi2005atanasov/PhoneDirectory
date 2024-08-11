@@ -20,7 +20,8 @@
             var contacts = from contact in db.Contacts
                            join address in db.Addresses on contact.AddressId equals address.Id
                            join country in db.Countries on address.CountryId equals country.Id
-                           join image in db.Images on contact.Id equals image.ContactId
+                           join image in db.Images on contact.Id equals image.ContactId into imageGroup
+                           from image in imageGroup.DefaultIfEmpty()
                            select new ContactViewModel
                            {
                                ContactId = contact.Id,
@@ -77,6 +78,32 @@
             await db.SaveChangesAsync();
 
             return contact.Id;
+        }
+
+        public async Task<ContactDetailsViewModel> DetailsById(int contactId)
+        {
+            var contactById = await
+                (from contact in db.Contacts.AsNoTracking()
+                 where contact.Id == contactId
+                 join address in db.Addresses on contact.AddressId equals address.Id
+                 join country in db.Countries on address.CountryId equals country.Id
+                 join image in db.Images on contact.Id equals image.ContactId into imageGroup
+                 from image in imageGroup.DefaultIfEmpty()
+                 select new ContactDetailsViewModel
+                 {
+                     Id = contactId,
+                     Name = contact.Name,
+                     Email = contact.Email,
+                     Country = country.Name,
+                     PhoneNumber = country.CountryPrefix + contact.PhoneNumber,
+                     PostalCode = address.PostalCode,
+                     Street = address.Street,
+                     Notes = contact.Notes,
+                     ImageData = image.DetailsContent
+                 })
+                               .FirstAsync();
+
+            return contactById;
         }
     }
 }
