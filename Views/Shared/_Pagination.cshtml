@@ -1,0 +1,45 @@
+﻿@using PhoneDirectory.Models.Shared;
+@model PaginationViewModel
+
+@if (Model.TotalPages > 1)
+{
+    <nav>
+        <ul class="pagination justify-content-center">
+            <li class="page-item @(Model.CurrentPage == 1 ? "disabled" : "")">
+                <a class="page-link" href="@Url.Action(Model.Action, Model.Controller, new { page = Model.CurrentPage - 1 })@Model.QueryParams" aria-label="Previous">
+                    <span aria-hidden="true">&laquo;</span>
+                </a>
+            </li>
+
+            @{
+                int startPage = Math.Max(1, Model.CurrentPage - 2);
+                int endPage = Math.Min(Model.TotalPages, Model.CurrentPage + 2);
+
+                if (endPage - startPage < 4)
+                {
+                    if (startPage == 1)
+                    {
+                        endPage = Math.Min(Model.TotalPages, startPage + 4);
+                    }
+                    else if (endPage == Model.TotalPages)
+                    {
+                        startPage = Math.Max(1, endPage - 4);
+                    }
+                }
+            }
+
+            @for (int i = startPage; i <= endPage; i++)
+            {
+                <li class="page-item @(Model.CurrentPage == i ? "active" : "")">
+                    <a class="page-link" href="@Url.Action(Model.Action, Model.Controller, new { page = i })@Model.QueryParams">@i</a>
+                </li>
+            }
+
+            <li class="page-item @(Model.CurrentPage == Model.TotalPages ? "disabled" : "")">
+                <a class="page-link" href="@Url.Action(Model.Action, Model.Controller, new { page = Model.CurrentPage + 1 })@Model.QueryParams" aria-label="Next">
+                    <span aria-hidden="true">&raquo;</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+}

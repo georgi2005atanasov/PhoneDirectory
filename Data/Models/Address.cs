@@ -1,6 +1,8 @@
 ﻿namespace PhoneDirectory.Data.Models
 {
-    public class Address
+    using PhoneDirectory.Data.Models.Base;
+
+    public class Address : DeletableEntity
     {
         public int Id { get; set; }
 

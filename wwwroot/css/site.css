@@ -123,6 +123,13 @@ label {
     -webkit-overflow-scrolling: touch;
 }
 
+@media (min-width: 600px) {
+    tr, td {
+        max-height: 60px;
+        cursor: pointer;
+    }
+}
+
 td {
     vertical-align: middle;
 }
@@ -130,4 +137,9 @@ td {
 td a {
     min-width: 83px;
     margin: 1px;
+}
+
+#contact-page-buttons a {
+    max-height: 46px;
+    max-width: 190px;
 }

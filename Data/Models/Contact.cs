@@ -1,10 +1,11 @@
 ﻿namespace PhoneDirectory.Data.Models
 {
+    using PhoneDirectory.Data.Models.Base;
     using System.ComponentModel.DataAnnotations;
     using static DataConstants.Contact;
     using static ErrorMessages.Contact;
 
-    public class Contact
+    public class Contact : DeletableEntity
     {
         public int Id { get; set; }
 

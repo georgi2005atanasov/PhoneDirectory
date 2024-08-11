@@ -26,14 +26,17 @@
             this.imageService = imageService;
         }
 
-        public async Task<IActionResult> All(string? search)
+        public async Task<IActionResult> All(string? search,
+            int page = 1)
         {
-            var contacts = await contactService.All(search);
+            var (contacts, allContactsCount) = await contactService.All(search, page);
 
             var allContactsModel = new AllContactsViewModel
             {
                 Contacts = contacts,
-                Search = search
+                Search = search,
+                Page = page,
+                AllContactsCount = allContactsCount
             };
 
             return View(allContactsModel);
@@ -55,27 +58,52 @@
 
             if (ModelState.IsValid)
             {
-                var contactId = await contactService.Create(contactModel!.Name,
-                    contactModel.PhonePrefix,
-                    contactModel.PhoneNumber,
-                    contactModel.Email,
-                    contactModel.Notes,
-                    contactModel.Street,
-                    contactModel.PostalCode);
-
-                if (contactModel.Image != null)
+                using (var transaction = await db.Database.BeginTransactionAsync())
                 {
-                    byte[] smallCircularImage = ImageHelper.CreateCircleImage(contactModel.Image, 55);
-                    byte[] resizedImage = ImageHelper.ResizeImage(contactModel.Image, 180, 250);
+                    try
+                    {
+                        if (ModelState.IsValid)
+                        {
+                            var contactId = await contactService.Create(contactModel!.Name,
+                                contactModel.PhonePrefix,
+                                contactModel.PhoneNumber,
+                                contactModel.Email,
+                                contactModel.Notes,
+                                contactModel.Street,
+                                contactModel.PostalCode);
 
-                    await imageService.Create(resizedImage,
-                        smallCircularImage,
-                        contactModel.Image.FileName,
-                        contactModel.Image.ContentType,
-                        contactId);
+                            if (contactModel.Image != null)
+                            {
+                                byte[] smallCircularImage = ImageHelper.CreateCircleImage(contactModel.Image, 55);
+                                byte[] resizedImage = ImageHelper.ResizeImage(contactModel.Image, 180, 250);
+
+                                await imageService.Create(resizedImage,
+                                    smallCircularImage,
+                                    contactModel.Image.FileName,
+                                    contactModel.Image.ContentType,
+                                    contactId);
+                            }
+
+                            await transaction.CommitAsync();
+
+                            TempData["Message"] = "User added successfully!";
+                            TempData["MessageType"] = "success";
+                        }
+                        else
+                        {
+                            await transaction.RollbackAsync();
+                        }
+                    }
+                    catch (Exception)
+                    {
+                        await transaction.RollbackAsync();
+                        TempData["Message"] = "An error occurred while adding the user.";
+                        TempData["MessageType"] = "danger";
+                        return RedirectToAction("All");
+                    }
+
+                    return RedirectToAction("All");
                 }
-
-                return RedirectToAction("All");
             }
 
             if (contactModel == null)
