@@ -1,4 +1,4 @@
-<h1>Phone Directory Application</h1>
+<h1>Phone Directory Application - MVC</h1>
 
 <p>This project is a <strong>Phone Directory</strong> application that includes the following features:</p>
 
