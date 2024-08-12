@@ -92,11 +92,13 @@
         {
             var contacts = db.Contacts
                    .IgnoreQueryFilters()
+                   .AsNoTracking()
                    .Where(x => x.IsDeleted == deleted)
                    .Include(x => x.Address)
                    .ThenInclude(x => x!.Country)
                    .Select(x => new ContactDetailsViewModel
                    {
+                       Id = x.Id,
                        Name = x.Name,
                        Email = x.Email,
                        Country = x.Address!.Country!.Name,
