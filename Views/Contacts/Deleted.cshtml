@@ -3,13 +3,13 @@
 @model AllContactsViewModel
 
 @{
-    ViewData["Title"] = "Home Page";
+    ViewData["Title"] = "Deleted Contacts";
 }
 
 <div class="container">
     <div class="row d-flex justify-content-between align-items-end mb-3">
         <div class="col-lg-9 d-flex justify-content-start">
-            <h2 class="m-0">All Contacts</h2>
+            <h2 class="m-0">Deleted Contacts</h2>
         </div>
         <div id="contact-page-buttons" class="col-lg-3 d-flex justify-content-md-end justify-content-start align-items-center mt-md-0 mt-4">
             <a href="@Url.Action("Create", "Contacts")" class="btn btn-secondary py-2 me-2">Add contact</a>
@@ -26,7 +26,7 @@
         </div>
     }
 
-    <form class="form-inline d-flex my-2 my-lg-0 mb-3" method="get" action="@Url.Action("All", "Contacts")">
+    <form class="form-inline d-flex my-2 my-lg-0 mb-3" method="get" action="@Url.Action("Deleted", "Contacts")">
         <input class="form-control mr-sm-2 p-2" type="search" placeholder="Name, Phone Number" aria-label="Search" name="search" value="@Model.Search">
         <button class="btn btn-outline-primary" type="submit">Search</button>
     </form>
@@ -61,14 +61,14 @@
                             }
                         </td>
                         <td>@contact.Name</td>
-                        <td>@contact.Prefix@contact.PhoneNumber</td>
+                        <td>@contact.CountryPrefix@contact.PhoneNumber</td>
                         <td>
                             <div class="d-flex flex-md-row flex-column justify-content-center">
                                 <a href="@Url.Action("Details", "Contacts", new { id = contact.ContactId, isDeleted=true })" class="btn btn-primary">Details</a>
                                 <form asp-action="Restore" asp-controller="Contacts" method="post" class="d-flex justify-content-center align-items-center">
                                     <input type="hidden" name="id" value="@contact.ContactId" />
                                     <button type="submit" class="btn btn-success text-nowrap">
-                                        <i class="fas fa-undo-alt"></i> Restore
+                                        Restore
                                     </button>
                                 </form>
                             </div>
@@ -79,7 +79,20 @@
         </table>
     </div>
 
-    <div class="d-flex justify-content-end align-items-center">Total Contacts:&nbsp;<strong>@Model.AllContactsCount</strong></div>
+    <div class="container">
+        <div class="d-flex justify-content-end align-items-center mb-3">
+            Total Contacts:&nbsp;<strong>@Model.AllContactsCount</strong>
+        </div>
+
+        <div class="d-flex justify-content-end align-items-center">
+            <a href="@Url.Action("CsvContacts", "Export", new { deleted = true })" class="btn btn-primary me-2">
+                Download All
+            </a>
+            <a href="@Url.Action("CsvContacts", "Export", new { deleted = true, search = Model.Search })" class="btn btn-primary">
+                Download Filtered
+            </a>
+        </div>
+    </div>
 
     @await Html.PartialAsync("_Pagination", new PaginationViewModel
     {

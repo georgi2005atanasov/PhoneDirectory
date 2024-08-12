@@ -6,7 +6,7 @@
 
         public string Name { get; set; } = null!;
 
-        public string Prefix { get; set; } = null!;
+        public string CountryPrefix { get; set; } = null!;
 
         public string PhoneNumber { get; set; } = null!;
 

@@ -1,6 +1,7 @@
 using PhoneDirectory.Infrastructure;
-using PhoneDirectory.Services.Contacts;
-using PhoneDirectory.Services.Images;
+using PhoneDirectory.Services.Contact;
+using PhoneDirectory.Services.Export;
+using PhoneDirectory.Services.Image;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -8,6 +9,7 @@ builder.Services
     .AddControllersWithViews();
 builder.Services.AddTransient<IContactService, ContactService>();
 builder.Services.AddTransient<IImageService, ImageService>();
+builder.Services.AddTransient<IExportService, ExportService>();
 
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? "";
 

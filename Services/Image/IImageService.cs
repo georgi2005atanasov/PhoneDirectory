@@ -1,4 +1,4 @@
-﻿namespace PhoneDirectory.Services.Images
+﻿namespace PhoneDirectory.Services.Image
 {
     public interface IImageService
     {

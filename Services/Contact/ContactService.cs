@@ -1,4 +1,4 @@
-﻿namespace PhoneDirectory.Services.Contacts
+﻿namespace PhoneDirectory.Services.Contact
 {
     using Microsoft.EntityFrameworkCore;
     using PhoneDirectory.Data;
@@ -26,16 +26,20 @@
                            {
                                ContactId = contact.Id,
                                Name = contact.Name,
-                               Prefix = country.CountryPrefix,
+                               CountryPrefix = country.CountryPrefix,
                                PhoneNumber = contact.PhoneNumber,
-                               ImageData = image.CircleContent
+                               ImageData = image.CircleContent,
                            };
 
             if (search != null)
+            {
+                search = search.ToLower();
+
                 contacts = contacts.Where(x => x.Name.ToLower().Contains(search) ||
-                                               x.PhoneNumber.StartsWith(search) ||
-                                               x.PhoneNumber.EndsWith(search) ||
-                                               x.Prefix.StartsWith(search));
+                                                   x.PhoneNumber.StartsWith(search) ||
+                                                   x.PhoneNumber.EndsWith(search) ||
+                                                   x.CountryPrefix.StartsWith(search));
+            }
 
             var contactsCount = await contacts.CountAsync();
 
@@ -59,16 +63,20 @@
                            {
                                ContactId = contact.Id,
                                Name = contact.Name,
-                               Prefix = country.CountryPrefix,
+                               CountryPrefix = country.CountryPrefix,
                                PhoneNumber = contact.PhoneNumber,
                                ImageData = image.CircleContent
                            };
 
             if (search != null)
+            {
+                search = search.ToLower();
+
                 contacts = contacts.Where(x => x.Name.ToLower().Contains(search) ||
-                                               x.PhoneNumber.StartsWith(search) ||
-                                               x.PhoneNumber.EndsWith(search) ||
-                                               x.Prefix.StartsWith(search));
+                                                   x.PhoneNumber.StartsWith(search) ||
+                                                   x.PhoneNumber.EndsWith(search) ||
+                                                   x.CountryPrefix.StartsWith(search));
+            }
 
             var contactsCount = await contacts.CountAsync();
 
@@ -78,6 +86,46 @@
                 .Take(ItemsPerPage)
                 .ToListAsync(), contactsCount);
         }
+
+        public Task<List<ContactDetailsViewModel>> AllForExport(bool deleted,
+            string? search)
+        {
+            var contacts = db.Contacts
+                   .IgnoreQueryFilters()
+                   .Where(x => x.IsDeleted == deleted)
+                   .Include(x => x.Address)
+                   .ThenInclude(x => x!.Country)
+                   .Select(x => new ContactDetailsViewModel
+                   {
+                       Name = x.Name,
+                       Email = x.Email,
+                       Country = x.Address!.Country!.Name,
+                       CountryPrefix = x.Address.Country.CountryPrefix,
+                       Notes = x.Notes,
+                       PostalCode = x.Address.PostalCode,
+                       Street = x.Address.Street,
+                       PhoneNumber = x.PhoneNumber,
+                       IsDeleted = x.IsDeleted,
+                       DeletedOn = x.DeletedOn,
+                       CreatedOn = x.CreatedOn,
+                       ModifiedOn = x.ModifiedOn
+                   });
+
+            if (search != null)
+            {
+                search = search.ToLower();
+
+                contacts = contacts.Where(x => x.Name.ToLower().Contains(search) ||
+                                                   x.PhoneNumber.StartsWith(search) ||
+                                                   x.PhoneNumber.EndsWith(search) ||
+                                                   x.CountryPrefix.StartsWith(search));
+            }
+
+            return contacts
+                .OrderBy(x => x.Name)
+                .ToListAsync();
+        }
+
 
         public async Task<int> Create(string name,
             string phonePrefix,
@@ -124,7 +172,7 @@
                 .FirstAsync(x => x.Id == contact.AddressId);
 
             var image = await db.Images
-                .FirstAsync(x => x.ContactId == contactId);
+                .FirstOrDefaultAsync(x => x.ContactId == contactId);
 
             contact.IsDeleted = true;
             contact.DeletedOn = DateTime.Now;
@@ -132,8 +180,11 @@
             address.IsDeleted = true;
             address.DeletedOn = DateTime.Now;
 
-            image.IsDeleted = true;
-            image.DeletedOn = DateTime.Now;
+            if (image != null)
+            {
+                image.IsDeleted = true;
+                image.DeletedOn = DateTime.Now;
+            }
 
             await db.SaveChangesAsync();
 
@@ -163,7 +214,10 @@
                      Street = address.Street,
                      Notes = contact.Notes,
                      ImageData = image.DetailsContent,
-                     IsDeleted = contact.IsDeleted
+                     IsDeleted = contact.IsDeleted,
+                     DeletedOn = contact.DeletedOn,
+                     CreatedOn = contact.CreatedOn,
+                     ModifiedOn = contact.ModifiedOn
                  })
                                .FirstAsync();
 
@@ -183,12 +237,13 @@
 
             if (contact.Name != name ||
                 contact.PhoneNumber != phoneNumber ||
-                contact.Notes != notes)
+                contact.Notes != notes ||
+                contact.Email != email)
             {
                 contact.Name = name;
                 contact.PhoneNumber = phoneNumber;
                 contact.Notes = notes;
-                contact.ModifiedOn = DateTime.Now;
+                contact.Email = email;
             }
 
             if (phonePrefix != country.CountryPrefix)
@@ -203,6 +258,8 @@
             if (address.Street != street ||
                 address.PostalCode != postalCode)
                 address.ModifiedOn = DateTime.Now;
+
+            contact.ModifiedOn = DateTime.Now;
 
             address.Street = street;
             address.PostalCode = postalCode;

@@ -1,4 +1,4 @@
-﻿namespace PhoneDirectory.Services.Images
+﻿namespace PhoneDirectory.Services.Image
 {
     using Microsoft.EntityFrameworkCore;
     using PhoneDirectory.Data;

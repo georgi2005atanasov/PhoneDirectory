@@ -1,4 +1,4 @@
-﻿namespace PhoneDirectory.Services.Contacts
+﻿namespace PhoneDirectory.Services.Contact
 {
     using PhoneDirectory.Models.Contact;
 
@@ -6,6 +6,12 @@
     {
         Task<(List<ContactViewModel>, int allContactsCount)> All(string? search,
             int page);
+
+        Task<(List<ContactViewModel>, int deletedContactsCount)> AllDeleted(string? search,
+            int page);
+
+        Task<List<ContactDetailsViewModel>> AllForExport(bool deleted,
+            string? search);
 
         Task<int> Create(string name,
             string phonePrefix,
@@ -28,8 +34,6 @@
 
         Task<ContactDetailsViewModel> DetailsById(int contactId, bool? deletedOnly = false);
 
-        Task<(List<ContactViewModel>, int deletedContactsCount)> AllDeleted(string? search, 
-            int page);
         Task<bool> Restore(int contactId);
     }
 }

@@ -11,7 +11,7 @@
     <a href="@Url.Action("All", "Contacts")" class="btn btn-secondary py-2">All contacts</a>
 </div>
 <form asp-action="Edit" asp-controller="Contacts" method="post" enctype="multipart/form-data">
-     <input type="hidden" name="_method" value="PUT" />
+    <input type="hidden" name="_method" value="PUT" />
 
     <div class="d-flex justify-content-start align-items-start">
         <div class="image-upload-container" onclick="document.getElementById('photo').click()">
@@ -85,6 +85,9 @@
             </textarea>
             <span asp-validation-for="Notes" class="text-danger"></span>
         </div>
+
+        <input asp-for="CreatedOn" type="hidden" value="@Model.CreatedOn" />
+        <input asp-for="IsDeleted" type="hidden" value="@Model.IsDeleted" />
     </div>
 
     <div class="w-100 d-flex justify-content-center align-items-center my-2">

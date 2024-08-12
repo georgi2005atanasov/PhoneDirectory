@@ -3,7 +3,7 @@
 @model AllContactsViewModel
 
 @{
-    ViewData["Title"] = "Home Page";
+    ViewData["Title"] = "All Contacts";
 }
 
 <div class="container">
@@ -61,7 +61,7 @@
                             }
                         </td>
                         <td>@contact.Name</td>
-                        <td>@contact.Prefix@contact.PhoneNumber</td>
+                        <td>@contact.CountryPrefix@contact.PhoneNumber</td>
                         <td>
                             <div class="d-flex flex-md-row flex-column justify-content-center">
                                 <a href="@Url.Action("Details", "Contacts", new { id = contact.ContactId })" class="btn btn-primary">Details</a>
@@ -81,7 +81,20 @@
         </table>
     </div>
 
-    <div class="d-flex justify-content-end align-items-center">Total Contacts:&nbsp;<strong>@Model.AllContactsCount</strong></div>
+    <div class="container">
+        <div class="d-flex justify-content-end align-items-center mb-3">
+            Total Contacts:&nbsp;<strong>@Model.AllContactsCount</strong>
+        </div>
+
+        <div class="d-flex justify-content-end align-items-center">
+            <a href="@Url.Action("CsvContacts", "Export", new { deleted = false })" class="btn btn-primary me-2">
+                Download All
+            </a>
+            <a href="@Url.Action("CsvContacts", "Export", new { deleted = false, search = Model.Search })" class="btn btn-primary">
+                Download Filtered
+            </a>
+        </div>
+    </div>
 
     @await Html.PartialAsync("_Pagination", new PaginationViewModel
     {

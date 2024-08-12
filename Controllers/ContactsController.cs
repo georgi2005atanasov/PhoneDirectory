@@ -6,8 +6,8 @@
     using PhoneDirectory.Models.Contact;
     using PhoneDirectory.Models.Country;
     using PhoneDirectory.Services;
-    using PhoneDirectory.Services.Contacts;
-    using PhoneDirectory.Services.Images;
+    using PhoneDirectory.Services.Contact;
+    using PhoneDirectory.Services.Image;
 
     public class ContactsController : Controller
     {
@@ -185,7 +185,7 @@
                         .AnyAsync(x => x.PhoneNumber == contactModel.PhoneNumber &&
                                   x.Id != contactModel.Id))
                 ModelState.AddModelError("PhoneNumber", "Contact with this number already exists!");
-
+            
             using (var transaction = await db.Database.BeginTransactionAsync())
             {
                 try
