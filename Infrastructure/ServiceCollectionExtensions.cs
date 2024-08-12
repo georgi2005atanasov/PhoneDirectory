@@ -25,6 +25,9 @@
                 .AddTransient<IImageService, ImageService>()
                 .AddTransient<IExportService, ExportService>()
                 .AddDatabase(connectionString);
+
+            services.AddHostedService<ContactCleanupService>();
+
             return services;
         }
     }
