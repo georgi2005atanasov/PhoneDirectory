@@ -1,20 +1,13 @@
 using PhoneDirectory.Infrastructure;
-using PhoneDirectory.Services.Contact;
-using PhoneDirectory.Services.Export;
-using PhoneDirectory.Services.Image;
 
 var builder = WebApplication.CreateBuilder(args);
-
-builder.Services
-    .AddControllersWithViews();
-builder.Services.AddTransient<IContactService, ContactService>();
-builder.Services.AddTransient<IImageService, ImageService>();
-builder.Services.AddTransient<IExportService, ExportService>();
-
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? "";
 
 builder.Services
-    .AddDatabase(connectionString);
+    .AddControllersWithViews();
+
+builder.Services
+    .ConfigureServices(connectionString);
 
 var app = builder.Build();
 
@@ -24,36 +17,17 @@ if (!app.Environment.IsDevelopment())
     app.UseHsts();
 }
 
-app.Use(async (context, next) =>
-{
-    if (context.Request.Method == "POST" && context.Request.Form["_method"] == "PUT")
-    {
-        context.Request.Method = "PUT";
-    }
-    await next();
-});
-
-app.Use(async (context, next) =>
-{
-    if (context.Request.Method == "POST" && context.Request.Form["_method"] == "DELETE")
-    {
-        context.Request.Method = "DELETE";
-    }
-    await next();
-});
-
 app
+    .AddCustomMiddlewares()
     .UseHttpsRedirection()
     .UseStaticFiles()
-    .UseRouting();
-
-
-app.UseEndpoints(endpoints =>
-{
-    endpoints.MapControllerRoute(
-        name: "default",
-        pattern: "{controller=Contacts}/{action=All}/{id?}");
-});
+    .UseRouting()
+    .UseEndpoints(endpoints =>
+    {
+        endpoints.MapControllerRoute(
+            name: "default",
+            pattern: "{controller=Contacts}/{action=All}/{id?}");
+    });
 
 app.ApplyMigrations();
 

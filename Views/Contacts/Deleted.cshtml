@@ -19,12 +19,7 @@
         </div>
     </div>
 
-    @if (TempData["Message"] != null && TempData["MessageType"] != null)
-    {
-        <div class="alert alert-@TempData["MessageType"]">
-            @TempData["Message"]
-        </div>
-    }
+    @await Html.PartialAsync("_Message")
 
     <form class="form-inline d-flex my-2 my-lg-0 mb-3" method="get" action="@Url.Action("Deleted", "Contacts")">
         <input class="form-control mr-sm-2 p-2" type="search" placeholder="Name, Phone Number" aria-label="Search" name="search" value="@Model.Search">

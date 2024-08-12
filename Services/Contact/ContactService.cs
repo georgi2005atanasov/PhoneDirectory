@@ -146,7 +146,7 @@
                 CreatedOn = DateTime.Now
             };
 
-            var contact = new Contact
+            var contact = new Data.Models.Contact
             {
                 Name = name,
                 PhoneNumber = phoneNumber,
@@ -294,7 +294,7 @@
             return true;
         }
 
-        private async Task<(Contact, Address, Country)> GetContactDetailsAsync(int contactId,
+        private async Task<(Data.Models.Contact, Address, Country)> GetContactDetailsAsync(int contactId,
             bool isDeleted)
         {
             if (!isDeleted)

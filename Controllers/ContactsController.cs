@@ -8,6 +8,7 @@
     using PhoneDirectory.Services;
     using PhoneDirectory.Services.Contact;
     using PhoneDirectory.Services.Image;
+    using static WebConstants.Contact;
 
     public class ContactsController : Controller
     {
@@ -81,8 +82,8 @@
             }
             catch (Exception)
             {
-                TempData["Message"] = "Could not get the contact, try to refresh.";
-                TempData["MessageType"] = "danger";
+                TempData["Message"] = CouldNotGetContact;
+                TempData["MessageType"] = WebConstants.DangerMessage;
                 return RedirectToAction("All");
             }
         }
@@ -99,7 +100,7 @@
         public async Task<IActionResult> Create(ContactInputModel contactModel)
         {
             if (contactModel != null && await db.Contacts.AnyAsync(x => x.PhoneNumber == contactModel.PhoneNumber))
-                ModelState.AddModelError("PhoneNumber", "Contact with this number already exists!");
+                ModelState.AddModelError("PhoneNumber", ContactAlreadyExists);
 
             using (var transaction = await db.Database.BeginTransactionAsync())
             {
@@ -129,8 +130,8 @@
 
                         await transaction.CommitAsync();
 
-                        TempData["Message"] = "Contact added successfully!";
-                        TempData["MessageType"] = "success";
+                        TempData["Message"] = ContactAddedSuccessfully;
+                        TempData["MessageType"] = WebConstants.SuccessMessage;
 
                         return RedirectToAction("All");
                     }
@@ -142,14 +143,14 @@
                 catch (Exception)
                 {
                     await transaction.RollbackAsync();
-                    TempData["Message"] = "An error occurred while adding the contact.";
-                    TempData["MessageType"] = "danger";
+                    TempData["Message"] = ErrorWhileAddingContact;
+                    TempData["MessageType"] = WebConstants.DangerMessage;
                     return RedirectToAction("All");
                 }
             }
 
             if (contactModel == null)
-                ModelState.AddModelError("Image", "The uploaded file exceeds the allowed size limit of 1.5MB.");
+                ModelState.AddModelError("Image", ImageTooBig);
 
             ViewBag.CountriesAndPrefixes = await GetCountriesAndPrefixes();
 
@@ -170,8 +171,8 @@
             }
             catch (Exception)
             {
-                TempData["Message"] = "Contact does not exists.";
-                TempData["MessageType"] = "danger";
+                TempData["Message"] = ContactDoesNotExists;
+                TempData["MessageType"] = WebConstants.DangerMessage;
                 return RedirectToAction("All");
             }
         }
@@ -184,7 +185,7 @@
                 await db.Contacts
                         .AnyAsync(x => x.PhoneNumber == contactModel.PhoneNumber &&
                                   x.Id != contactModel.Id))
-                ModelState.AddModelError("PhoneNumber", "Contact with this number already exists!");
+                ModelState.AddModelError("PhoneNumber", ContactAlreadyExists);
             
             using (var transaction = await db.Database.BeginTransactionAsync())
             {
@@ -215,8 +216,8 @@
 
                         await transaction.CommitAsync();
 
-                        TempData["Message"] = "Contact edited successfully!";
-                        TempData["MessageType"] = "success";
+                        TempData["Message"] = ContactEditedSuccessfully;
+                        TempData["MessageType"] = WebConstants.SuccessMessage;
 
                         return RedirectToAction("All");
                     }
@@ -228,14 +229,14 @@
                 catch (Exception)
                 {
                     await transaction.RollbackAsync();
-                    TempData["Message"] = "An error occurred while editing the contact.";
-                    TempData["MessageType"] = "danger";
+                    TempData["Message"] = ErrorWhileEditing;
+                    TempData["MessageType"] = WebConstants.DangerMessage;
                     return RedirectToAction("All");
                 }
             }
 
             if (contactModel == null)
-                ModelState.AddModelError("Image", "The uploaded file exceeds the allowed size limit of 1.5MB.");
+                ModelState.AddModelError("Image", ImageTooBig);
 
             ViewBag.CountriesAndPrefixes = await GetCountriesAndPrefixes();
 
@@ -249,15 +250,15 @@
             {
                 var detailsModel = await contactService.Delete(id);
 
-                TempData["Message"] = "Contact deleted successfully!";
-                TempData["MessageType"] = "success";
+                TempData["Message"] = ContactDeletedSuccessfully;
+                TempData["MessageType"] = WebConstants.SuccessMessage;
 
                 return RedirectToAction("All");
             }
             catch (Exception)
             {
-                TempData["Message"] = "Could not delete the contact, please try again.";
-                TempData["MessageType"] = "danger";
+                TempData["Message"] = CouldNotDeleteContact;
+                TempData["MessageType"] = WebConstants.DangerMessage;
                 return RedirectToAction("All");
             }
         }
@@ -269,16 +270,16 @@
             {
                 var result = await contactService.Restore(id);
 
-                TempData["Message"] = "Contact restored successfully!";
-                TempData["MessageType"] = "success";
+                TempData["Message"] = ContactRestoredSuccessfully;
+                TempData["MessageType"] = WebConstants.SuccessMessage;
 
-                return RedirectToAction("All");
+                return RedirectToAction("Deleted");
             }
             catch (Exception)
             {
-                TempData["Message"] = "An error occurred while editing the contact.";
-                TempData["MessageType"] = "danger";
-                return RedirectToAction("All");
+                TempData["Message"] = ErrorWhileRestoringContact;
+                TempData["MessageType"] = WebConstants.DangerMessage;
+                return RedirectToAction("Deleted");
             }
         }
 

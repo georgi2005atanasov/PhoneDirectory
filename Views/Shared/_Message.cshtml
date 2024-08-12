@@ -1,0 +1,6 @@
+﻿@if (TempData["Message"] != null && TempData["MessageType"] != null)
+{
+    <div class="alert alert-@TempData["MessageType"]">
+        @TempData["Message"]
+    </div>
+}

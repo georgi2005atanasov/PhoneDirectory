@@ -1,4 +1,4 @@
-﻿namespace PhoneDirectory.Infrastructure
+﻿namespace PhoneDirectory.Utilities
 {
     using System.Xml.Serialization;
     using PhoneDirectory.Models.Country;
